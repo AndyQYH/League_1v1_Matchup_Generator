@@ -1,9 +1,12 @@
+import type { Locale } from "./i18n"
+
 export interface Champion {
   id: string
   name: string
   title: string
   role: "Fighter" | "Mage" | "Assassin" | "Marksman" | "Support" | "Tank"
   image: string
+  localized?: Partial<Record<Locale, { name: string; title: string }>>
 }
 
 export const roleColors: Record<Champion["role"], string> = {

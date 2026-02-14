@@ -39,7 +39,7 @@ interface ChampionCardProps {
 
 export function ChampionCard({ champion, isSpinning, variant = "standard" }: ChampionCardProps) {
   const config = variantStyles[variant]
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
 
   if (!champion) {
     const placeholderLabel =
@@ -76,6 +76,10 @@ export function ChampionCard({ champion, isSpinning, variant = "standard" }: Cha
     )
   }
 
+  const localizedCopy = champion.localized?.[locale]
+  const displayName = localizedCopy?.name ?? champion.name
+  const displayTitle = localizedCopy?.title ?? champion.title
+
   const roleKey = `roles.${champion.role}` as TranslationKey
   const roleLabel = t(roleKey)
 
@@ -97,7 +101,7 @@ export function ChampionCard({ champion, isSpinning, variant = "standard" }: Cha
         <div className={cn("relative w-full overflow-hidden", config.image)}>
           <img
             src={champion.image}
-            alt={`${champion.name} splash art`}
+            alt={`${displayName} splash art`}
             className="w-full h-full object-cover object-top"
             crossOrigin="anonymous"
           />
@@ -127,10 +131,10 @@ export function ChampionCard({ champion, isSpinning, variant = "standard" }: Cha
               config.title
             )}
           >
-            {champion.name}
+            {displayName}
           </h3>
           <p className={cn("text-muted-foreground font-sans mt-0.5", config.subtitle)}>
-            {champion.title}
+            {displayTitle}
           </p>
         </div>
       </div>
