@@ -12,46 +12,63 @@ import {
   Map,
   Snowflake,
   Globe,
+  Sparkles,
 } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
+import type { TranslationKey } from "@/lib/i18n"
+import { getLocalizedRuleContent } from "@/lib/dynamic-translations"
 
 const categoryConfig: Record<
   string,
-  { label: string; color: string; bgColor: string; borderColor: string; icon: React.ComponentType<{ className?: string }> }
+  {
+    labelKey: TranslationKey
+    color: string
+    bgColor: string
+    borderColor: string
+    icon: React.ComponentType<{ className?: string }>
+  }
 > = {
   "summoner-spells": {
-    label: "Summoner Spell",
+    labelKey: "ruleCard.categories.summoner-spells",
     color: "text-cyan-400",
     bgColor: "bg-cyan-400/10",
     borderColor: "border-cyan-400/30",
     icon: Flame,
   },
   items: {
-    label: "Item Restriction",
+    labelKey: "ruleCard.categories.items",
     color: "text-amber-400",
     bgColor: "bg-amber-400/10",
     borderColor: "border-amber-400/30",
     icon: Swords,
   },
   skills: {
-    label: "Skill Restriction",
+    labelKey: "ruleCard.categories.skills",
     color: "text-rose-400",
     bgColor: "bg-rose-400/10",
     borderColor: "border-rose-400/30",
     icon: Zap,
   },
   champion: {
-    label: "Champion Rule",
+    labelKey: "ruleCard.categories.champion",
     color: "text-emerald-400",
     bgColor: "bg-emerald-400/10",
     borderColor: "border-emerald-400/30",
     icon: Shield,
   },
   economy: {
-    label: "Economy Rule",
+    labelKey: "ruleCard.categories.economy",
     color: "text-yellow-300",
     bgColor: "bg-yellow-300/10",
     borderColor: "border-yellow-300/30",
     icon: Coins,
+  },
+  runes: {
+    labelKey: "ruleCard.categories.runes",
+    color: "text-purple-200",
+    bgColor: "bg-purple-400/10",
+    borderColor: "border-purple-300/30",
+    icon: Sparkles,
   },
 }
 
@@ -60,15 +77,15 @@ const mapChipBase =
 
 const mapVisuals: Record<
   GameMap,
-  { label: string; classes: string; icon: React.ComponentType<{ className?: string }> }
+  { labelKey: TranslationKey; classes: string; icon: React.ComponentType<{ className?: string }> }
 > = {
   rift: {
-    label: "Summoner's Rift",
+    labelKey: "mapSelector.maps.rift.name",
     classes: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200",
     icon: Map,
   },
   aram: {
-    label: "Howling Abyss",
+    labelKey: "mapSelector.maps.aram.name",
     classes: "border-sky-400/40 bg-sky-400/10 text-sky-200",
     icon: Snowflake,
   },
@@ -82,6 +99,8 @@ interface RuleCardProps {
 }
 
 export function RuleCard({ rule, isSpinning }: RuleCardProps) {
+  const { t, locale } = useLanguage()
+
   if (!rule) {
     return (
       <div className="relative w-full max-w-sm">
@@ -99,7 +118,7 @@ export function RuleCard({ rule, isSpinning }: RuleCardProps) {
             >
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            <p className="text-sm font-sans">Awaiting rule...</p>
+            <p className="text-sm font-sans">{t("cards.rule.awaiting")}</p>
           </div>
         </div>
       </div>
@@ -108,6 +127,8 @@ export function RuleCard({ rule, isSpinning }: RuleCardProps) {
 
   const config = categoryConfig[rule.categoryId] ?? categoryConfig["champion"]
   const Icon = config.icon
+  const categoryLabel = t(config.labelKey)
+  const localized = getLocalizedRuleContent(rule, locale)
 
   return (
     <div
@@ -132,8 +153,8 @@ export function RuleCard({ rule, isSpinning }: RuleCardProps) {
         />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-3 mb-4 relative">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-start gap-3 mb-3 relative">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
             <div
               className={cn(
                 "flex items-center justify-center w-10 h-10 rounded-lg",
@@ -143,33 +164,39 @@ export function RuleCard({ rule, isSpinning }: RuleCardProps) {
             >
               <Icon className="w-5 h-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h3
                 className={cn(
-                  "font-serif text-lg font-bold tracking-wide",
+                  "font-serif text-lg font-bold tracking-wide break-words leading-tight",
                   config.color
                 )}
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
               >
-                {rule.name}
+                {localized.name}
               </h3>
             </div>
           </div>
           <Badge
             variant="outline"
             className={cn(
-              "text-[10px] font-sans uppercase tracking-wider shrink-0",
+              "text-[10px] font-sans uppercase tracking-wider shrink-0 ml-auto",
               config.borderColor,
               config.color,
               config.bgColor
             )}
           >
-            {config.label}
+            {categoryLabel}
           </Badge>
         </div>
 
         {/* Description */}
-        <p className="text-sm text-muted-foreground font-sans leading-relaxed relative">
-          {rule.description}
+        <p className="text-sm text-muted-foreground font-sans leading-relaxed relative mt-1">
+          {localized.description}
         </p>
 
         <div className="map mt-4 flex flex-wrap gap-2">
@@ -181,7 +208,7 @@ export function RuleCard({ rule, isSpinning }: RuleCardProps) {
               )}
             >
               <Globe className="w-3.5 h-3.5" />
-              All Maps
+              {t("cards.mapsAll")}
             </span>
           ) : (
             rule.maps.map((mapId) => {
@@ -190,7 +217,7 @@ export function RuleCard({ rule, isSpinning }: RuleCardProps) {
               return (
                 <span key={mapId} className={cn(mapChipBase, details.classes)}>
                   <Icon className="w-3.5 h-3.5" />
-                  {details.label}
+                  {t(details.labelKey)}
                 </span>
               )
             })

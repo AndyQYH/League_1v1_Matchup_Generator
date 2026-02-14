@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Cinzel, Inter } from 'next/font/google'
 
 import './globals.css'
+import { LanguageProvider } from '@/components/language-provider'
 
 const _cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' })
 const _inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -21,8 +22,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${_cinzel.variable} ${_inter.variable} font-sans antialiased`}>{children}</body>
+    <html lang="zh">
+      <body className={`${_cinzel.variable} ${_inter.variable} font-sans antialiased`}>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   )
 }

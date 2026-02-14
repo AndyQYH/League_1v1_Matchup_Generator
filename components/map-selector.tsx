@@ -3,6 +3,7 @@
 import type { GameMap } from "@/lib/effects"
 import { cn } from "@/lib/utils"
 import { Map, Snowflake, Globe } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
 
 interface MapSelectorProps {
   selectedMap: GameMap | null
@@ -11,10 +12,25 @@ interface MapSelectorProps {
   winConditionCount: number
 }
 
-const maps: { id: GameMap | null; label: string; sublabel: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: null, label: "All Maps", sublabel: "No filter", icon: Globe },
-  { id: "rift", label: "Summoner's Rift", sublabel: "Normal", icon: Map },
-  { id: "aram", label: "Howling Abyss", sublabel: "ARAM", icon: Snowflake },
+const maps = [
+  {
+    id: null as GameMap | null,
+    labelKey: "mapSelector.maps.all.name" as const,
+    sublabelKey: "mapSelector.maps.all.sublabel" as const,
+    icon: Globe,
+  },
+  {
+    id: "rift" as const,
+    labelKey: "mapSelector.maps.rift.name" as const,
+    sublabelKey: "mapSelector.maps.rift.sublabel" as const,
+    icon: Map,
+  },
+  {
+    id: "aram" as const,
+    labelKey: "mapSelector.maps.aram.name" as const,
+    sublabelKey: "mapSelector.maps.aram.sublabel" as const,
+    icon: Snowflake,
+  },
 ]
 
 export function MapSelector({
@@ -23,12 +39,14 @@ export function MapSelector({
   ruleCount,
   winConditionCount,
 }: MapSelectorProps) {
+  const { t } = useLanguage()
+
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="flex items-center justify-center gap-2 mb-3">
         <div className="h-px w-6 bg-border" />
         <span className="text-xs font-sans uppercase tracking-[0.2em] text-muted-foreground">
-          Map
+          {t("mapSelector.label")}
         </span>
         <div className="h-px w-6 bg-border" />
       </div>
@@ -51,10 +69,10 @@ export function MapSelector({
             >
               <Icon className={cn("w-4 h-4", isActive && "text-[hsl(var(--primary))]")} />
               <span className="text-xs font-sans font-semibold leading-tight">
-                {m.label}
+                {t(m.labelKey)}
               </span>
               <span className="text-[10px] font-sans opacity-70 leading-tight">
-                {m.sublabel}
+                {t(m.sublabelKey)}
               </span>
             </button>
           )
@@ -63,10 +81,10 @@ export function MapSelector({
 
       <div className="flex items-center justify-center gap-4 mt-3">
         <span className="text-[10px] font-sans text-muted-foreground">
-          {ruleCount} rules
+          {t("mapSelector.ruleCountLabel", { count: ruleCount })}
         </span>
         <span className="text-[10px] font-sans text-muted-foreground">
-          {winConditionCount} win conditions
+          {t("mapSelector.winCountLabel", { count: winConditionCount })}
         </span>
       </div>
     </div>

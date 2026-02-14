@@ -52,6 +52,13 @@ export const defaultCategories: RuleCategory[] = [
     icon: "economy",
     enabled: true,
   },
+  {
+    id: "runes",
+    name: "Rune Experiments",
+    description: "Keystone and secondary tree twists",
+    icon: "runes",
+    enabled: true,
+  },
 ]
 
 export const rules: Rule[] = [
@@ -102,12 +109,23 @@ export const rules: Rule[] = [
 
   // Economy Rules
   { id: "ec-1", categoryId: "economy", name: "No Selling Items", description: "Once purchased, items are permanent and cannot be sold", maps: ["rift", "aram"] },
-  { id: "ec-2", categoryId: "economy", name: "Tear Start", description: "Must start with a Tear of the Goddess regardless of champion", maps: ["rift", "aram"] },
-  { id: "ec-3", categoryId: "economy", name: "Dark Seal Start", description: "Must start with a Dark Seal regardless of champion", maps: ["rift"] },
-  { id: "ec-4", categoryId: "economy", name: "No Component Combining", description: "Cannot combine components - only buy full items or components", maps: ["rift", "aram"] },
-  { id: "ec-5", categoryId: "economy", name: "Long Sword Only Start", description: "Must start with a Long Sword regardless of champion", maps: ["rift"] },
+  { id: "ec-2", categoryId: "economy", name: "Tear Start", description: "Must start with a Tear of the Goddess", maps: ["rift", "aram"] },
+  { id: "ec-3", categoryId: "economy", name: "Dark Seal Start", description: "Must start with a Dark Seal", maps: ["rift"] },
+  { id: "ec-4", categoryId: "economy", name: "A 2TB RAM", description: "Must Start with a 2-Tier Boot", maps: ["aram"] },
+  { id: "ec-5", categoryId: "economy", name: "Long Sword Only Start", description: "Must start with a Long Sword", maps: ["rift"] },
   { id: "ec-6", categoryId: "economy", name: "No Wards", description: "Cannot purchase or place any wards", maps: ["rift"] },
   { id: "ec-7", categoryId: "economy", name: "Guardian Items Only", description: "Can only buy Guardian item upgrades and boots", maps: ["aram"] },
+
+  // Rune Experiments
+  { id: "ru-1", categoryId: "runes", name: "Bookworm", description: "Primary keystone must be Unsealed Spellbook", maps: ["rift", "aram"] },
+  { id: "ru-2", categoryId: "runes", name: "Resolve Splash", description: "Resolve must be your secondary tree", maps: ["rift", "aram"] },
+  { id: "ru-3", categoryId: "runes", name: "Survive of the Fitest", description: "Keystone has to have at least two from: Absorb Life, Overgrowth, and Gathering Storm", maps: ["rift", "aram"] },
+  { id: "ru-4", categoryId: "runes", name: "Glacial Chains", description: "Primary keystone must be Glacial Augment and combined with gathering storm", maps: ["rift", "aram"] },
+  { id: "ru-5", categoryId: "runes", name: "Play Safe", description: "Primary keystone tree must be Guardian --> Demolish --> Bone Plate --> Unflinching", maps: ["rift", "aram"] },
+  { id: "ru-6", categoryId: "runes", name: "Play Aggressive", description: "Primary keystone tree must be Electrocute --> Sudden Impact --> Sixth Sense --> Ultimate Hunter", maps: ["rift", "aram"] },
+  { id: "ru-7", categoryId: "runes", name: "Gamble Addict", description: "Primary keystone tree must be First Strike --> Cash Back --> Triple Tonic --> Jack of All Trades", maps: ["rift", "aram"] },
+  { id: "ru-8", categoryId: "runes", name: "Deja Vu", description: "Keystone must include: Phase Rush, Celerity, Waterwalking, Magical Footwear", maps: ["rift", "aram"] },
+  { id: "ru-9", categoryId: "runes", name: "Serial Auto-Attacker", description: "Primary keystone tree must have Lethal Tempo and Legend:Alacrity", maps: ["rift", "aram"] },
 ]
 
 export function getRulesForEnabledCategories(categories: RuleCategory[], map?: GameMap): Rule[] {

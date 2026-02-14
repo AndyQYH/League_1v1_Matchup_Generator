@@ -4,6 +4,8 @@ import type { Champion } from "@/lib/champions"
 import { roleColors } from "@/lib/champions"
 import { cn } from "@/lib/utils"
 import { Swords, Wand2, Skull, Crosshair, Heart, ShieldHalf } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
+import type { TranslationKey } from "@/lib/i18n"
 
 const allRoles: Champion["role"][] = [
   "Fighter",
@@ -41,22 +43,21 @@ export function RoleFilter({
   totalCount,
 }: RoleFilterProps) {
   const allSelected = enabledRoles.size === allRoles.length
-  const noneSelected = enabledRoles.size === 0
+  const { t } = useLanguage()
+  const label = t("roleFilter.labelWithCount", {
+    filtered: filteredCount,
+    total: totalCount,
+  })
 
   return (
     <div className="w-full max-w-sm">
       <div className="flex items-center justify-between mb-2.5">
-        <p className="text-xs font-sans text-muted-foreground">
-          Filter by Role{" "}
-          <span className="text-foreground font-medium">
-            ({filteredCount}/{totalCount})
-          </span>
-        </p>
+        <p className="text-xs font-sans text-muted-foreground">{label}</p>
         <button
           onClick={allSelected ? onClearAll : onSelectAll}
           className="text-[10px] font-sans text-muted-foreground hover:text-foreground transition-colors"
         >
-          {allSelected ? "Clear All" : "Select All"}
+          {allSelected ? t("roleFilter.clearAll") : t("roleFilter.selectAll")}
         </button>
       </div>
       <div className="grid grid-cols-3 gap-1.5">
@@ -66,6 +67,8 @@ export function RoleFilter({
           const colors = roleColors[role]
           // Extract the base color from the roleColors string for consistent styling
           const textColor = colors.split(" ")[0] // e.g. "text-orange-400"
+          const roleKey = `roles.${role}` as TranslationKey
+          const roleLabel = t(roleKey)
 
           return (
             <button
@@ -78,10 +81,10 @@ export function RoleFilter({
                   : "border-border/50 bg-transparent text-muted-foreground/50 opacity-50 hover:opacity-75"
               )}
               aria-pressed={isActive}
-              aria-label={`Filter by ${role}`}
+              aria-label={t("roleFilter.ariaLabel", { role: roleLabel })}
             >
               <Icon className={cn("w-3.5 h-3.5", isActive ? textColor : "text-current")} />
-              {role}
+              {roleLabel}
             </button>
           )
         })}

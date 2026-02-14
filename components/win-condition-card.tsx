@@ -3,6 +3,9 @@
 import type { WinCondition } from "@/lib/win-conditions"
 import { cn } from "@/lib/utils"
 import { Sword, Castle, Hash, Coins, Clock, Star, Map, Snowflake, Globe } from "lucide-react"
+import { useLanguage } from "@/components/language-provider"
+import type { TranslationKey } from "@/lib/i18n"
+import { getLocalizedWinConditionContent } from "@/lib/dynamic-translations"
 
 const iconMap: Record<WinCondition["icon"], React.ComponentType<{ className?: string }>> = {
   kill: Sword,
@@ -27,16 +30,19 @@ const mapChipBase =
 
 const mapVisuals = {
   rift: {
-    label: "Summoner's Rift",
+    labelKey: "mapSelector.maps.rift.name" as TranslationKey,
     classes: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200",
     icon: Map,
   },
   aram: {
-    label: "Howling Abyss",
+    labelKey: "mapSelector.maps.aram.name" as TranslationKey,
     classes: "border-sky-400/40 bg-sky-400/10 text-sky-200",
     icon: Snowflake,
   },
-} satisfies Record<WinCondition["maps"][number], { label: string; classes: string; icon: React.ComponentType<{ className?: string }> }>
+} satisfies Record<
+  WinCondition["maps"][number],
+  { labelKey: TranslationKey; classes: string; icon: React.ComponentType<{ className?: string }> }
+>
 
 const totalMapOptions = Object.keys(mapVisuals).length
 
@@ -46,6 +52,7 @@ interface WinConditionCardProps {
 }
 
 export function WinConditionCard({ condition, isSpinning }: WinConditionCardProps) {
+  const { t, locale } = useLanguage()
   if (!condition) {
     return (
       <div className="relative w-full max-w-sm">
@@ -68,7 +75,7 @@ export function WinConditionCard({ condition, isSpinning }: WinConditionCardProp
               <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22" />
               <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
             </svg>
-            <p className="text-sm font-sans">Awaiting win condition...</p>
+            <p className="text-sm font-sans">{t("cards.win.awaiting")}</p>
           </div>
         </div>
       </div>
@@ -77,6 +84,7 @@ export function WinConditionCard({ condition, isSpinning }: WinConditionCardProp
 
   const Icon = iconMap[condition.icon]
   const colors = iconColors[condition.icon]
+  const localized = getLocalizedWinConditionContent(condition, locale)
   const bgColor = colors.split(" ")[1] // e.g. "bg-red-400/10"
   const borderColor = colors.split(" ")[2] // e.g. "border-red-400/30"
   const textColor = colors.split(" ")[0] // e.g. "text-red-400"
@@ -121,12 +129,12 @@ export function WinConditionCard({ condition, isSpinning }: WinConditionCardProp
                 textColor
               )}
             >
-              {condition.name}
+              {localized.name}
             </h3>
           </div>
         </div>
         <p className="text-sm text-muted-foreground font-sans leading-relaxed relative">
-          {condition.description}
+          {localized.description}
         </p>
 
         <div className="map mt-4 flex flex-wrap gap-2">
@@ -138,7 +146,7 @@ export function WinConditionCard({ condition, isSpinning }: WinConditionCardProp
               )}
             >
               <Globe className="w-3.5 h-3.5" />
-              All Maps
+              {t("cards.mapsAll")}
             </span>
           ) : (
             condition.maps.map((mapId) => {
@@ -147,7 +155,7 @@ export function WinConditionCard({ condition, isSpinning }: WinConditionCardProp
               return (
                 <span key={mapId} className={cn(mapChipBase, details.classes)}>
                   <Icon className="w-3.5 h-3.5" />
-                  {details.label}
+                  {t(details.labelKey)}
                 </span>
               )
             })

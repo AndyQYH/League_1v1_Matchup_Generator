@@ -3,11 +3,13 @@
 import { Champion, roleColors } from "@/lib/champions"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/components/language-provider"
+import type { TranslationKey } from "@/lib/i18n"
 
 const variantStyles = {
   standard: {
-    wrapper: "w-64",
-    card: "w-64",
+    wrapper: "w-full max-w-[16rem]",
+    card: "w-full",
     image: "h-[380px]",
     title: "text-xl",
     subtitle: "text-sm",
@@ -37,8 +39,13 @@ interface ChampionCardProps {
 
 export function ChampionCard({ champion, isSpinning, variant = "standard" }: ChampionCardProps) {
   const config = variantStyles[variant]
+  const { t } = useLanguage()
 
   if (!champion) {
+    const placeholderLabel =
+      variant === "compact"
+        ? t("cards.champion.pending")
+        : t("cards.champion.awaiting")
     return (
       <div className={cn("relative flex flex-col items-center", config.wrapper)}>
         <div
@@ -62,14 +69,15 @@ export function ChampionCard({ champion, isSpinning, variant = "standard" }: Cha
               <circle cx="12" cy="8" r="4" />
               <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
             </svg>
-            <p className={cn("font-sans", config.placeholderText)}>
-              {variant === "compact" ? "Pending" : "Awaiting champion..."}
-            </p>
+            <p className={cn("font-sans", config.placeholderText)}>{placeholderLabel}</p>
           </div>
         </div>
       </div>
     )
   }
+
+  const roleKey = `roles.${champion.role}` as TranslationKey
+  const roleLabel = t(roleKey)
 
   return (
     <div
@@ -106,7 +114,7 @@ export function ChampionCard({ champion, isSpinning, variant = "standard" }: Cha
                 roleColors[champion.role]
               )}
             >
-              {champion.role}
+              {roleLabel}
             </Badge>
           </div>
         </div>

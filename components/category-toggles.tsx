@@ -13,8 +13,11 @@ import {
   Coins,
   Settings2,
   ChevronDown,
+  Sparkles,
 } from "lucide-react"
 import { useState } from "react"
+import { useLanguage } from "@/components/language-provider"
+import type { TranslationKey } from "@/lib/i18n"
 
 const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "summoner-spells": Flame,
@@ -22,6 +25,7 @@ const categoryIcons: Record<string, React.ComponentType<{ className?: string }>>
   skills: Zap,
   champion: Shield,
   economy: Coins,
+  runes: Sparkles,
 }
 
 const categoryColors: Record<string, string> = {
@@ -30,6 +34,7 @@ const categoryColors: Record<string, string> = {
   skills: "text-rose-400",
   champion: "text-emerald-400",
   economy: "text-yellow-300",
+  runes: "text-purple-300",
 }
 
 interface CategoryTogglesProps {
@@ -49,6 +54,7 @@ export function CategoryToggles({
 }: CategoryTogglesProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const enabledCount = categories.filter((c) => c.enabled).length
+  const { t } = useLanguage()
 
   return (
     <div className="w-full max-w-sm">
@@ -60,10 +66,10 @@ export function CategoryToggles({
         <div className="flex items-center gap-2.5">
           <Settings2 className="w-4 h-4 text-muted-foreground" />
           <span className="text-sm font-sans font-medium text-foreground">
-            Rule Categories
+            {t("categoryToggles.title")}
           </span>
           <span className="text-xs font-sans text-muted-foreground">
-            {enabledCount}/{categories.length} active
+            {t("categoryToggles.status", { enabled: enabledCount, total: categories.length })}
           </span>
         </div>
         <ChevronDown
@@ -85,7 +91,7 @@ export function CategoryToggles({
           {/* Quick actions */}
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-sans text-muted-foreground">
-              {totalEnabledRules} rules available
+              {t("categoryToggles.rulesAvailable", { count: totalEnabledRules })}
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -94,7 +100,7 @@ export function CategoryToggles({
                 onClick={onEnableAll}
                 className="h-6 text-[10px] font-sans px-2 text-muted-foreground hover:text-foreground"
               >
-                Enable All
+                {t("categoryToggles.enableAll")}
               </Button>
               <Button
                 variant="ghost"
@@ -102,7 +108,7 @@ export function CategoryToggles({
                 onClick={onDisableAll}
                 className="h-6 text-[10px] font-sans px-2 text-muted-foreground hover:text-foreground"
               >
-                Disable All
+                {t("categoryToggles.disableAll")}
               </Button>
             </div>
           </div>
@@ -113,6 +119,8 @@ export function CategoryToggles({
               const Icon = categoryIcons[category.id] ?? Shield
               const color = categoryColors[category.id] ?? "text-foreground"
               const ruleCount = getRuleCountByCategory(category.id)
+              const labelKey = `ruleCard.categories.${category.id}` as TranslationKey
+              const categoryLabel = t(labelKey)
 
               return (
                 <div
@@ -128,10 +136,10 @@ export function CategoryToggles({
                     <Icon className={cn("w-4 h-4", color)} />
                     <div>
                       <p className="text-sm font-sans font-medium text-foreground leading-tight">
-                        {category.name}
+                        {categoryLabel}
                       </p>
                       <p className="text-[11px] font-sans text-muted-foreground leading-tight">
-                        {ruleCount} rules
+                        {t("categoryToggles.ruleCount", { count: ruleCount })}
                       </p>
                     </div>
                   </div>
