@@ -62,12 +62,9 @@ jobs:
             **/pnpm-lock.yaml
             **/package-lock.json
             **/yarn.lock
-      - name: Enable corepack
+      - name: Install pnpm
         if: steps.detect-package-manager.outputs.manager == 'pnpm'
-        run: corepack enable
-      - name: Use pnpm 9
-        if: steps.detect-package-manager.outputs.manager == 'pnpm'
-        run: corepack prepare pnpm@9 --activate
+        run: npm install -g pnpm@9
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
